@@ -121,8 +121,8 @@ ASP.NET MVC core 5.
                 public DbSet<Reservation> Reservation { get; set; }
             }
     ```
-        Make the application use the database context when application start.
-        at startup.cs file :
+
+5. Make the application use the database context when application start, at startup.cs file :
 
          ```c#
                 public void ConfigureServices(IServiceCollection services)
@@ -134,9 +134,9 @@ ASP.NET MVC core 5.
                 }
         ```
 
-5. Add migration (in package manger console type "add-migration" then "update-database")
+6. Add migration (in package manger console type "add-migration" then "update-database")
 
-6. Create Controller for every Model.
+7. Create Controller for every Model.
     1. For Room,Meal Models We created Room and Meal Controller and inside every controller We created (Update,Delete,Create) action.
      ```c#
          public class MealController : Controller
