@@ -1,0 +1,41 @@
+﻿@model IEnumerable<DiversHotel.Models.RoomType>
+<div class="container">
+    <div class="row justify-content-start mt-3">
+        <a class="btn btn-danger col-3 col-sm-3 col-md-3 col-lg-2 col-xl-1" asp-area="" asp-controller="Admin" asp-action="Index">Back</a>
+    </div>
+    <h1 class="col-12" style="text-align:center">Room Types</h1>
+    <div class="row justify-content-center mt-3">
+        <a class="btn btn-success col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3" asp-area="" asp-controller="Room" asp-action="Create">Create New Room Type</a>
+    </div>
+    <table class="table  mt-4">
+        <thead>
+            <tr>
+                <th scope="col">Room Types</th>
+                <th scope="col">Rate Per Person</th>
+                <th scope="col">Update</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0)
+            {
+                @foreach (var room in Model)
+                {
+                    <tr>
+                        <td>@room.roomType</td>
+                        <td>@room.ratePerPreson</td>
+                        <td><a class="btn btn-info col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8" asp-area="" asp-controller="Room" asp-route-Id="@room.Id" asp-action="Update">Update</a></td>
+                        <td><a class="btn btn-danger col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8" asp-area="" asp-controller="Room" asp-route-Id="@room.Id" asp-action="Delete">Delete</a></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align:center;">No items created yet</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

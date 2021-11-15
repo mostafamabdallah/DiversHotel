@@ -1,0 +1,151 @@
+﻿@model DiversHotel.Models.Reservation
+<section id="section1">
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="height:100vh;">
+            <div class="col-10">
+                <h1 style=" text-align: center; font-size: 3.5rem;">Welcome To Divers Hotel</h1>
+                <p style="text-align: center; font-size: 2.5rem; color: white; font-family: 'Petemoss', cursive ">Here is where memories are created!</p>
+                <div class="row justify-content-center mt-3">
+                    <a class="btn btn-warning" href="#section2">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="section2">
+    <div class="container pt-5">
+        <div class="row justify-content-center align-items-center" style="height:100vh;">
+            <div class="col-12" style="background-color: #ffffff85; border-radius:25px;">
+                <h1 style=" text-align: center; font-size: 3rem;" class="p-3">Book a Room </h1>
+                <form method="post" asp-action="GetReservationTotal">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input asp-for="name" required type="text" class="form-control" placeholder="Full Name">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-envelope-square"></i></span>
+                        <input asp-for="email" required type="text" class="form-control mr-3" placeholder="Email">
+                        <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                        <select class="form-control" required asp-for="country" id="country">
+                            <option selected disabled hidden value="">Select Your Country</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="fas fa-male"></i></span>
+                        <input asp-for="no_adult" required type="number" id="adult" class="form-control  mr-3" placeholder="Number of Adults">
+                        <span class="input-group-text"><i class="fas fa-child"></i></span>
+                        <input asp-for="no_children" required type="number" id="child" class="form-control" placeholder="Number of Children">
+                    </div>
+                    <p  style="font-family: 'Petemoss', cursive; font-size: .6rem; color: red; display:none" class="text-center redmes">
+                        Rooms can accommodate up to 2 adults and 2 children only.
+                    </p>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fas fa-bed"></i></span>
+                        <select class="form-control  mr-3" required asp-for="room_type_id" id="roomType">
+                            <option selected disabled hidden value="">Select Your Room Type</option>
+                        </select>
+                        <span class="input-group-text"><i class="fas fa-fish"></i></span>
+                        <select class="form-control" required asp-for="meal_plan_id" id="mealPlane">
+                            <option selected disabled hidden value="">Select Your Meal Plan</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">From</span>
+                        <input asp-for="checkin_date" id="from" required type="date" class="form-control  mr-3">
+                        <span class="input-group-text">To</span>
+                        <input asp-for="checkout_date" id="to" required type="date" class="form-control">
+                    </div>
+                    <div class="row justify-content-center p-3">
+                        <input type="submit" class="btn btn-warning col-6 col-sm-6 col-md-3 col-lg-3 col-xl-2" value="Book Now" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    const updateMealUI = async () => {
+        const resposne = await fetch("/Meal/getData");
+        try {
+            const data = await resposne.json();
+            if (data.length > 0) {
+                for (item of data) {
+                    $('#mealPlane').append(`<option  value ="${item.Id}">${item.mealPlans}</option>`);
+                }
+            } else {
+                $('#mealPlane').append(`<option>No Meal Plans Found</option>`);
+            }
+
+        } catch (error) {
+            console.log("error:", error);
+        }
+    };
+
+    const updateRoomUI = async () => {
+        const resposne = await fetch("/Room/getData");
+        try {
+            const data = await resposne.json();
+            if (data.length > 0) {
+                for (item of data) {
+                    $('#roomType').append(`<option  value ="${item.Id}">${item.roomType}</option>`);
+                }
+            } else {
+                $('#roomType').append(`<option>No Room Type Found</option>`);
+            }
+
+        } catch (error) {
+            console.log("error:", error);
+        }
+    };
+
+    const getCountries = async () => {
+        const resposne = await fetch("https://restcountries.com/v3.1/all");
+        try {
+            const countries = await resposne.json();
+            let countriesArrray = []
+            if (countries.length > 0) {
+                for (country of countries) {
+                    countriesArrray.push(country.name.common);
+                }
+                countriesArrray = countriesArrray.sort()
+                for (country of countriesArrray) {
+                    $('#country').append(`<option  value ="${country}">${country}</option>`);
+                }
+            } else {
+                $('#country').append(`<option>No Country Found</option>`);
+            }
+
+        } catch (error) {
+            console.log("error:", error);
+        }
+    };
+
+    const validation = () => {
+        $('#from').on('change', function () {
+            $('#to').attr('min', $(this).val())
+        });
+
+        $('#to').on('change', function () {
+            $('#from').attr('max', $(this).val())
+        });
+
+        $('#adult , #child').on('keyup', function () {
+            if ($(this).val() > 2 || $(this).val() < 0) {
+                $(this).val(2)
+                $('.redmes').show();
+            } else {
+                $('.redmes').hide();
+            }
+        })
+    }
+
+
+    updateMealUI();
+    updateRoomUI();
+    getCountries();
+    validation();
+
+</script>
