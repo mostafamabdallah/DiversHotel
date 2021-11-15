@@ -132,7 +132,8 @@ ASP.NET MVC core 5.
                     );
                     services.AddControllersWithViews();
                 }
-    ```
+        ```
+
 5. Add migration (in package manger console type "add-migration" then "update-database")
 
 6. Create Controller for every Model.
