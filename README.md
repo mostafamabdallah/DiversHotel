@@ -89,3 +89,135 @@ ASP.NET MVC core 5.
                 public DateTime checkout_date { get; set; }
             }
     ```
+2. Create Database connection 
+    In appsettings.json file we put our ConnectionStrings We set the server and database.
+
+        ```json
+         "ConnectionStrings": {
+            "DefaultConnection": "Server=DESKTOP-C6P48T7;Database=DiversHotel;Trusted_Connection=True;MultipleActiveResultSets=True"
+            },
+         ```
+
+3. Install Server-Side packages from NuGet package manger
+    1. Microsoft Entity Framework core 5.0.1.
+    2. Microsoft Entity Framework core SQL Server 5.0.1.
+    3. Microsoft Entity Framework core Tools 5.0.1.
+
+4. Create new class for our application database context and DbSet for every Model.
+
+     ```c#
+         public class ApplicationDBContext :DbContext
+            {
+                public ApplicationDBContext()
+                {
+                }
+
+                public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) :base(options)
+                {
+
+                }
+                public DbSet<MealPlans> MealPlans { get; set; }
+                public DbSet<RoomType> RoomType { get; set; }
+                public DbSet<Reservation> Reservation { get; set; }
+            }
+    ```
+        Make the application use the database context when application start.
+        at startup.cs file :
+
+         ```c#
+                public void ConfigureServices(IServiceCollection services)
+                {
+                    services.AddDbContext<ApplicationDBContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                    );
+                    services.AddControllersWithViews();
+                }
+    ```
+5. Add migration (in package manger console type "add-migration" then "update-database")
+
+6. Create Controller for every Model.
+    1. For Room,Meal Models We created Room and Meal Controller and inside every controller We created (Update,Delete,Create) action.
+     ```c#
+         public class MealController : Controller
+    {
+        private readonly ApplicationDBContext _db;
+        public MealController(ApplicationDBContext db)
+        {
+            _db = db;
+        }
+        public IActionResult Index()
+        {
+            IEnumerable<MealPlans> objList = _db.MealPlans;
+            return View(objList);
+        }
+        // GET Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+        //POST Create
+        [HttpPost]
+        public IActionResult Create(MealPlans obj)
+        {
+            _db.MealPlans.Add(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        //GET Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.MealPlans.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+        //POST Delete
+        [HttpPost]
+        public IActionResult DeletePost(int? Id)
+        {
+            var obj = _db.MealPlans.Find(Id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _db.MealPlans.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        //GET Update
+        public IActionResult Update(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.MealPlans.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+        //POST Update
+        [HttpPost]
+        public IActionResult Update(MealPlans obj)
+        {
+            _db.MealPlans.Update(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public string getData()
+        {
+            var data = _db.MealPlans;
+            var jsondata = JsonConvert.SerializeObject(data);
+            return jsondata;
+        }
+    }
+    ```
+   
