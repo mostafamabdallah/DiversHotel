@@ -1,7 +1,4 @@
-# Project name
-
-Divers Hotel
-
+# Divers Hotel
 ## Task Description
 Divers Hotel is a 5 stars hotel having 150 rooms, those rooms are divided into 10 Room types (Sea View, Pool View, 
 Garden View, Royal Suite, etc.) Each room has different price per night depending on the season and public holidays. 
@@ -124,15 +121,15 @@ ASP.NET MVC core 5.
 
 5. Make the application use the database context when application start, at startup.cs file :
 
-         ```c#
-                public void ConfigureServices(IServiceCollection services)
-                {
-                    services.AddDbContext<ApplicationDBContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-                    );
-                    services.AddControllersWithViews();
-                }
-        ```
+    ```c#
+        public void ConfigureServices(IServiceCollection services)
+            {
+                services.AddDbContext<ApplicationDBContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                );
+                services.AddControllersWithViews();
+            }
+    ```
 
 6. Add migration (in package manger console type "add-migration" then "update-database")
 
