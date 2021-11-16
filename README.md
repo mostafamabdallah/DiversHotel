@@ -46,6 +46,8 @@ ASP.NET MVC core 5.
 1. https://restcountries.com/v3.1/all  for getting countries data.
 
 ## Project Steps
+
+## 1. Server-Side
 1. Create Project model.
     1. MealPlans Model 
     ```c#
@@ -218,4 +220,163 @@ ASP.NET MVC core 5.
         }
     }
     ```
-   
+
+    8. Create 'GetReservationTotal()' that calculate the total amount of money.
+    
+            ```c#
+            public ActionResult GetReservationTotal(Reservation obj)
+                {
+                    DateTime checkin = obj.checkin_date;
+                    DateTime checkout = obj.checkout_date;
+                    int no_of_days = (int)(checkout - checkin).TotalDays;
+                    int no_persons = obj.no_adult + obj.no_children;
+                    int meal_id = obj.meal_plan_id;
+                    int room_id = obj.room_type_id;
+                    float mealPrice;
+                    if (checkin.Month > 5 && checkout.Month > 5)
+                    {
+                        mealPrice = _db.MealPlans.Find(meal_id).ratePerPerson_high_season;
+                    }
+                    else if (checkin.Month <= 5 && checkout.Month <= 5)
+                    {
+                        mealPrice = _db.MealPlans.Find(meal_id).ratePerPerson_low_season;
+                    }
+                    else
+                    {
+                        mealPrice = _db.MealPlans.Find(meal_id).ratePerPerson_high_season;
+                    }
+                    float roomPrice = _db.RoomType.Find(room_id).ratePerPreson;
+                    float singleDayPrice = mealPrice + roomPrice;
+                    float totalPrice = singleDayPrice * no_of_days * no_persons;
+                    _db.Reservation.Add(obj);
+                    _db.SaveChanges();
+                    return View((object)totalPrice);
+                }
+            ```
+    ## 2. Client-Side 
+   1. Create View for every GET Controller action.
+        looping throught the Model to create page content.
+       ```c#
+            @model IEnumerable<DiversHotel.Models.MealPlans>
+
+            <div class="container">
+            <div class="row justify-content-start mt-3">
+                <a class="btn btn-danger col-3 col-sm-3 col-md-3 col-lg-2 col-xl-1" asp-area="" asp-controller="Admin" asp-action="Index">Back</a>
+            </div>
+            <h1 class="col-12" style="text-align:center;">Meal Plans</h1>
+            <div class="row justify-content-center">
+                <a class="btn btn-success col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3" asp-area="" asp-controller="Meal" asp-action="Create">Create New Meal Plan</a>
+            </div>
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th scope="col">Meal plans</th>
+                        <th scope="col">Low Season Rate Per Person</th>
+                        <th scope="col">High Season Rate Per Person</th>
+                        <th scope="col">Update</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count() > 0)
+                    {
+                        @foreach (var meal in Model)
+                        {
+                    <tr>
+                        <td>@meal.mealPlans</td>
+                        <td>@meal.ratePerPerson_low_season</td>
+                        <td>@meal.ratePerPerson_high_season</td>
+                        <td><a class="btn btn-info col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8" asp-area="" asp-controller="Meal" asp-route-Id="@meal.Id" asp-action="Update">Update</a></td>
+                        <td><a class="btn btn-danger col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8" asp-area="" asp-controller="Meal" asp-route-Id="@meal.Id" asp-action="Delete">Delete</a></td>
+                    </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:center;">No items created yet</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            </div>
+        ```
+
+   2. In Home view create script to get Room types and meal plans and Countries data , also make some validation for reservation form.
+        ```js
+            const updateMealUI = async () => {
+            const resposne = await fetch("/Meal/getData");
+            try {
+                const data = await resposne.json();
+                if (data.length > 0) {
+                    for (item of data) {
+                        $('#mealPlane').append(`<option  value ="${item.Id}">${item.mealPlans}</option>`);
+                    }
+                } else {
+                    $('#mealPlane').append(`<option>No Meal Plans Found</option>`);
+                }
+
+            } catch (error) {
+                console.log("error:", error);
+            }
+        };
+        const updateRoomUI = async () => {
+            const resposne = await fetch("/Room/getData");
+            try {
+                const data = await resposne.json();
+                if (data.length > 0) {
+                    for (item of data) {
+                        $('#roomType').append(`<option  value ="${item.Id}">${item.roomType}</option>`);
+                    }
+                } else {
+                    $('#roomType').append(`<option>No Room Type Found</option>`);
+                }
+
+            } catch (error) {
+                console.log("error:", error);
+            }
+        };
+        const getCountries = async () => {
+            const resposne = await fetch("https://restcountries.com/v3.1/all");
+            try {
+                const countries = await resposne.json();
+                let countriesArrray = []
+                if (countries.length > 0) {
+                    for (country of countries) {
+                        countriesArrray.push(country.name.common);
+                    }
+                    countriesArrray = countriesArrray.sort()
+                    for (country of countriesArrray) {
+                        $('#country').append(`<option  value ="${country}">${country}</option>`);
+                    }
+                } else {
+                    $('#country').append(`<option>No Country Found</option>`);
+                }
+
+            } catch (error) {
+                console.log("error:", error);
+            }
+        };
+        const validation = () => {
+            $('#from').on('change', function () {
+                $('#to').attr('min', $(this).val())
+            });
+
+            $('#to').on('change', function () {
+                $('#from').attr('max', $(this).val())
+            });
+
+            $('#adult , #child').on('keyup', function () {
+                if ($(this).val() > 2 || $(this).val() < 0) {
+                    $(this).val(2)
+                    $('.redmes').show();
+                } else {
+                    $('.redmes').hide();
+                }
+            })
+        }
+        updateMealUI();
+        updateRoomUI();
+        getCountries();
+        validation();
+        ```
