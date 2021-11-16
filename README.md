@@ -45,7 +45,7 @@ ASP.NET MVC core 5.
 
 1. https://restcountries.com/v3.1/all  for getting countries data.
 
-## before running.
+## Before running.
 1. Make sure to connect to your database server.
 2. In PMC "package maneger console" type "add-migration" then "update-database".
 3. Enjoy 😊.
