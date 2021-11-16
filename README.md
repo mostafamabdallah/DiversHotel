@@ -222,8 +222,8 @@ ASP.NET MVC core 5.
     ```
 
     8. Create 'GetReservationTotal()' that calculate the total amount of money.
-    
-            ```c#
+
+        ```c#
             public ActionResult GetReservationTotal(Reservation obj)
                 {
                     DateTime checkin = obj.checkin_date;
@@ -252,7 +252,8 @@ ASP.NET MVC core 5.
                     _db.SaveChanges();
                     return View((object)totalPrice);
                 }
-            ```
+         ```
+
     ## 2. Client-Side 
    1. Create View for every GET Controller action.
         looping throught the Model to create page content.
