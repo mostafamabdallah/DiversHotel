@@ -1,5 +1,5 @@
-# Divers Hotel
-## Task Description
+# Divers Hotel 🏩
+## Task Description 📝
 Divers Hotel is a 5 stars hotel having 150 rooms, those rooms are divided into 10 Room types (Sea View, Pool View, 
 Garden View, Royal Suite, etc.) Each room has different price per night depending on the season and public holidays. 
 The hotel offers its guests Three meal plans, Half Board, Full Board and All Inclusive. Each Meal plan has a different 
@@ -24,27 +24,31 @@ Schema or the GetReservationTotal function implementation.
 8.  Meal plan rates are per person. Children and Adults have the same rate.
 9.  We should be able to modify/add/remove meal plans and their prices anytime without code changing
 
-## Framework used
+## Framework used 💁‍♂️
 
 ASP.NET MVC core 5.
 
-## Server-side packages
+## Server-side packages 💾
 
 1. Microsoft Entity Framework core 5.0.1.
 2. Microsoft Entity Framework core SQL Server 5.0.1.
 3. Microsoft Entity Framework core Tools 5.0.1.
 
-## Client-side packages
+## Client-side packages 💻
 
 1. BootStrap.
 2. JQuery.
 3. Font-Awesome
 4. Google Fonts.
 
-## External APIS
+## External APIS 📅
 
 1. https://restcountries.com/v3.1/all  for getting countries data.
 
+## befor running.
+1. Make sure to connect to your database server.
+2. In PMC "package maneger console" type "add-migration" then "update-database".
+3. Enjoy 😊.
 ## Project Steps
 
 ## 1. Server-Side
@@ -381,3 +385,6 @@ ASP.NET MVC core 5.
         getCountries();
         validation();
         ```
+
+
+        ## Thank You ❤
